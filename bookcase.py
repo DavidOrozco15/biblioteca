@@ -15,23 +15,25 @@ def pausar():
 def agregar_libro():
     global contadorId
     limpiar()
-    print("----AGREGAR LIBRO----")
-    titulo = input("Ingrese el título del libro: ")
-    autor = input("Ingrese el autor del libro: ")
-    genero = input("Ingrese el género del libro: ")
+    print("\n----AGREGAR LIBRO----")
+    titulo = input("\nIngrese el título del libro: ")
+    autor = input("\nIngrese el autor del libro: ")
+    genero = input("\nIngrese el género del libro: ")
     try:
-        año = int(input("Ingrese el año de publicación: "))
+        año = int(input("\nIngrese el año de publicación: "))
     except ValueError:
-        print("Error: El año debe ser un número entero.")
+        print("\nError: El año debe ser un número entero.")
+        pausar()
         return
     
-    estado = input("¿Ya lo leíste? (s/n): ").lower()
+    estado = input("\n¿Ya lo leíste? (s/n): ").lower()
     if estado == 's':
         estado = "✅"
     elif estado == 'n':
         estado = "❌"
     else:
-        print("Error: Debe responder 's' para sí o 'n' para no.")
+        print("\nError: Debe responder 's' para sí o 'n' para no.")
+        pausar()
         return
     
     # Crear tupla con la información
@@ -46,54 +48,55 @@ def ver_biblioteca():
     limpiar()
     print("----CONTENIDO DE LA BIBLIOTECA----")
     if not biblioteca:
-        print("La biblioteca está vacía.")
+        print("\nLa biblioteca está vacía.")
         pausar()
         return
-    print("\n--- Biblioteca Completa ---")
+    print("\n----------------------------------------Biblioteca Completa-----------------------------------------------")
     for id_libro, info in biblioteca.items():
         titulo, autor, genero, año, estado = info
-        print(f"ID: {id_libro} | Título: {titulo} | Autor: {autor} | Género: {genero} | Año: {año} | Estado: {estado}")
-    print("---------------------------")
+        print(f"\nID: {id_libro} | Título: {titulo} | Autor: {autor} | Género: {genero} | Año: {año} | Estado: {estado}")
+    print("------------------------------------------------------------------------------------------------------------")
     pausar()
 
 # Función para buscar libros
 def buscar_libros():
     limpiar()
     if not biblioteca:
-        print("La biblioteca está vacía.")
+        print("\nLa biblioteca está vacía.")
         pausar()
         return
+    print("----BUSCAR LIBRO----")
+    buscarPor = input("\nBuscar por | 1: Título | 2: Autor | 3: Género |: ")
+    termino = input("\nIngrese el término de búsqueda: ").lower()
     
-    criterio = input("Buscar por (1: Título, 2: Autor, 3: Género): ")
-    busqueda = input("Ingrese el término de búsqueda: ").lower()
-    
-    encontrados = False
+    encontrados = False  # ✅ se inicializa una sola vez
     for id_libro, info in biblioteca.items():
         titulo, autor, genero, año, estado = info
-        coincidencia = False
+        siEncontro = False  # ✅ se resetea por libro
         
-        if criterio == '1':
-            if busqueda in titulo.lower():
-                coincidencia = True
-        elif criterio == '2':
-            if busqueda in autor.lower():
-                coincidencia = True
-        elif criterio == '3':
-            if busqueda in genero.lower():
-                coincidencia = True
+        if buscarPor == '1':
+            if termino in titulo.lower():
+                siEncontro = True
+        elif buscarPor == '2':
+            if termino in autor.lower():
+                siEncontro = True
+        elif buscarPor == '3':
+            if termino in genero.lower():
+                siEncontro = True
         else:
-            print("Criterio inválido.")
+            print("Indice inválido.")
             pausar()
             return
         
-        if coincidencia:
+        if siEncontro:
             print(f"ID: {id_libro} | Título: {titulo} | Autor: {autor} | Género: {genero} | Año: {año} | Estado: {estado}")
-            encontrados = True
-            pausar()
+            encontrados = True   # ✅ ahora sí se mantiene en True si encuentra algo
     
     if not encontrados:
         print("No se encontraron libros que coincidan con la búsqueda.")
-        pausar()
+    
+    pausar()
+
 
 # Función para cambiar el estado de lectura
 def cambiar_estado():
@@ -104,6 +107,11 @@ def cambiar_estado():
         return
     
     try:
+        print("\n--- Biblioteca Completa ---")
+        for id_libro, info in biblioteca.items():
+            titulo, autor, genero, año, estado = info
+            print(f"ID: {id_libro} | Título: {titulo} | Autor: {autor} | Género: {genero} | Año: {año} | Estado: {estado}")
+        print("---------------------------")
         id_libro = int(input("Ingrese el ID del libro: "))
     except ValueError:
         print("Error: El ID debe ser un número entero.")
@@ -115,11 +123,12 @@ def cambiar_estado():
         pausar()
         return
     
-    nuevo_estado_input = input("¿Ya lo leíste? (s/n): ").lower()
-    if nuevo_estado_input == 's':
-        nuevo_estado = "✅"
-    elif nuevo_estado_input == 'n':
-        nuevo_estado = "❌"
+    
+    entrada = input("¿Ya lo leíste? (s/n): ").lower()
+    if entrada == 's':
+        nuevoEstado = "✅"
+    elif entrada == 'n':
+        nuevoEstado = "❌"
     else:
         print("Error: Debe responder 's' o 'n'.")
         pausar()
@@ -127,7 +136,7 @@ def cambiar_estado():
     
     # Actualizar la tupla
     titulo, autor, genero, año, _ = biblioteca[id_libro]
-    biblioteca[id_libro] = (titulo, autor, genero, año, nuevo_estado)
+    biblioteca[id_libro] = (titulo, autor, genero, año, nuevoEstado)
     print("Estado actualizado correctamente.")
     pausar()
 
@@ -139,9 +148,9 @@ def estadisticas():
         pausar()
         return
     
-    total_libros = len(biblioteca)
+    totalLibros = len(biblioteca)
     leidos = 0
-    por_leer = 0
+    noLeidos = 0
     generos = {}
     
     for info in biblioteca.values():
@@ -149,7 +158,7 @@ def estadisticas():
         if estado == "✅":
             leidos += 1
         else:
-            por_leer += 1
+            noLeidos += 1
         
         if genero in generos:
             generos[genero] += 1
@@ -157,9 +166,9 @@ def estadisticas():
             generos[genero] = 1
     
     print(f"\n--- Estadísticas ---")
-    print(f"Total de libros: {total_libros}")
+    print(f"Total de libros: {totalLibros}")
     print(f"Libros leídos (✅): {leidos}")
-    print(f"Libros por leer (❌): {por_leer}")
+    print(f"Libros por leer (❌): {noLeidos}")
     
     if generos:
         print("Géneros más frecuentes:")
@@ -193,7 +202,7 @@ def eliminar_libro():
         pausar()
         return
     
-    titulo, autor, genero, año, estado = biblioteca[id_libro]
+    titulo, autor, _, _, _ = biblioteca[id_libro]
     confirm = input(f"¿Eliminar '{titulo}' de {autor}? (s/n): ").lower()
     if confirm == 's':
         del biblioteca[id_libro]
@@ -208,6 +217,7 @@ def main():
     while True:
         limpiar()
         print("\n--- Menú de Biblioteca ---")
+        print()
         print("1. Agregar libro")
         print("2. Ver biblioteca completa")
         print("3. Buscar libros")
@@ -215,7 +225,7 @@ def main():
         print("5. Ver estadísticas")
         print("6. Eliminar libro")
         print("7. Salir")
-        
+        print()
         opcion = input("Seleccione una opción: ")
         
         match opcion:
