@@ -1,10 +1,3 @@
-# Sistema de Gestión de Biblioteca Personal
-# Este programa utiliza solo diccionarios, tuplas, funciones, if, while, match,
-# estructuras condicionales y operadores normales/lógicos, como se solicitó.
-# No se usan listas, sets u otras estructuras avanzadas.
-
-# Diccionario principal para almacenar la biblioteca
-# Clave: ID único (entero), Valor: tupla (titulo, autor, genero, año, estado)
 biblioteca = {}
 contador_id = 1  # Contador para generar IDs únicos
 
@@ -19,9 +12,14 @@ def agregar_libro():
     except ValueError:
         print("Error: El año debe ser un número entero.")
         return
-    estado = input("Ingrese el estado (leído/no leído): ").lower()
-    if estado not in ['leído', 'no leído']:
-        print("Error: El estado debe ser 'leído' o 'no leído'.")
+    
+    estado_input = input("¿Ya lo leíste? (s/n): ").lower()
+    if estado_input == 's':
+        estado = "✅"
+    elif estado_input == 'n':
+        estado = "❌"
+    else:
+        print("Error: Debe responder 's' para sí o 'n' para no.")
         return
     
     # Crear tupla con la información
@@ -91,12 +89,16 @@ def cambiar_estado():
         print("ID no encontrado.")
         return
     
-    nuevo_estado = input("Nuevo estado (leído/no leído): ").lower()
-    if nuevo_estado not in ['leído', 'no leído']:
-        print("Error: El estado debe ser 'leído' o 'no leído'.")
+    nuevo_estado_input = input("¿Ya lo leíste? (s/n): ").lower()
+    if nuevo_estado_input == 's':
+        nuevo_estado = "✅"
+    elif nuevo_estado_input == 'n':
+        nuevo_estado = "❌"
+    else:
+        print("Error: Debe responder 's' o 'n'.")
         return
     
-    # Actualizar la tupla (crear nueva tupla ya que las tuplas son inmutables)
+    # Actualizar la tupla
     titulo, autor, genero, año, _ = biblioteca[id_libro]
     biblioteca[id_libro] = (titulo, autor, genero, año, nuevo_estado)
     print("Estado actualizado correctamente.")
@@ -104,22 +106,21 @@ def cambiar_estado():
 # Función para generar estadísticas
 def estadisticas():
     if not biblioteca:
-        print("La biblioteca está vacío.")
+        print("La biblioteca está vacía.")
         return
     
     total_libros = len(biblioteca)
     leidos = 0
     por_leer = 0
-    generos = {}  # Diccionario temporal para contar géneros
+    generos = {}
     
     for info in biblioteca.values():
         _, _, genero, _, estado = info
-        if estado == 'leído':
+        if estado == "✅":
             leidos += 1
         else:
             por_leer += 1
         
-        # Contar géneros
         if genero in generos:
             generos[genero] += 1
         else:
@@ -127,12 +128,11 @@ def estadisticas():
     
     print(f"\n--- Estadísticas ---")
     print(f"Total de libros: {total_libros}")
-    print(f"Libros leídos: {leidos}")
-    print(f"Libros por leer: {por_leer}")
+    print(f"Libros leídos (✅): {leidos}")
+    print(f"Libros por leer (❌): {por_leer}")
     
     if generos:
         print("Géneros más frecuentes:")
-        # Encontrar el género con más apariciones (iterar manualmente)
         max_count = 0
         genero_max = ""
         for g, count in generos.items():
@@ -158,7 +158,6 @@ def eliminar_libro():
         print("ID no encontrado.")
         return
     
-    # Mostrar info para confirmar
     titulo, autor, genero, año, estado = biblioteca[id_libro]
     confirm = input(f"¿Eliminar '{titulo}' de {autor}? (s/n): ").lower()
     if confirm == 's':
@@ -195,7 +194,7 @@ def main():
             case '6':
                 eliminar_libro()
             case '7':
-                print("¡Hasta luego!")
+                print("¡Hasta luego! 👋")
                 break
             case _:
                 print("Opción inválida. Intente nuevamente.")
